@@ -1,11 +1,13 @@
 <?php 
     require('inc/essentiales.php');
     require('inc/db_config.php');
+    echo (!$con);
+
 
     session_start();
-        if(!(isset($_SESSION['adminLogin']) && $_SESSION['adminLogin'] == true)){
-            redirect('dashboard.php');
-        } 
+    if((isset($_SESSION['adminLogin']) && $_SESSION['adminLogin'] == true)){
+        redirect('dashboard.php');
+    } 
 ?>
 
 <!DOCTYPE html>
@@ -32,7 +34,7 @@
 
 
     <div class="login-form text-center rounded bg-white shadow overflow-hidden">
-        <form method="POST" action="someone.php">
+        <form method="POST">
             <h4 class="text-white bg-dark py-3">ADMIN LOGIN PANEL</h4>
             <div class="p-4">
                 <div class="mb-3">
@@ -53,11 +55,16 @@
     
     if (isset($_POST['login'])) {
         $frm_data = filteration($_POST);
+        //print_r($frm_data);
         
-        $query = "SELECT * FROM 'admin_name' =? AND 'admin_pass'=?";
+        $query = "SELECT * FROM 'admin_cred' WHERE 'admin_name' =? AND 'admin_pass'=?";
         $values = [$frm_data['admin_name'],$frm_data['admin_pass']];
+        //print_r($values);
+
 
         $res = select($query,$values,"ss");
+        print_r($res->num_rows);
+        print_r(1);
         if($res->num_rows==1){
             $row = mysqli_fetch_assoc($res);
             $_SESSION['adminLogin'] = true;
@@ -65,7 +72,7 @@
             redirect('dashboard.php');
         }
         else{
-            alert('error','LOgin failed - Invalid Credentials');
+            alert('error','Login failed - Invalid Credentials');
         }
     }
 

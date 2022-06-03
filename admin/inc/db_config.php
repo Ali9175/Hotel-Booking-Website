@@ -8,6 +8,7 @@
 
     $con = mysqli_connect($hname,$uname,$pass,$db);
 
+
     if(!$con){
         die("Cannot Cnnect to Database".mysqli_connect_error());
     }
@@ -24,9 +25,13 @@
 
     function select($sql,$values,$datatypes){
         $con = $GLOBALS['con'];
-        if($stmt = mysqli_prepare($con,$sql)){
+        //print_r($GLOBALS) ;
+        if($stmt = mysqli_prepare($con,$sql)){ // prepares an SQL statement for execution.
+            // $con: This is an object representing a connection to MySQL Server
+            // $sql: This is string value specifying the required query.
+            //print(ok);
             mysqli_stmt_bind_param($stmt,$datatypes,...$values);
-            if(mysqli_stmt_excute($stmt)){
+            if(mysqli_stmt_excute($stmt)){ ////Executing the statement
                 $res = mysqli_stmt_get_result($stmt);
                 mysqli_stmt_close($stmt); 
                 return $res;
@@ -39,5 +44,6 @@
             die("Query cannot be prepared - Select");
         }
     }
+
 
 ?>
