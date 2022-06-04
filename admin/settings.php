@@ -24,7 +24,7 @@
 
                 <!-- General Setting Section -->
 
-                <div class="card">
+                <div class="card border-0 shsdow-sm mb-4">
                     <div class="card-body">
                         <div class="d-flex align-items-center justify-content-between mb-3">
                             <h5 class="card-title m-0">General Setting</h5>
@@ -54,22 +54,46 @@
                                 <div class="modal-body">
                                     <div class="mb-3">
                                         <label class="form-label">Site Title</label>
-                                        <input type="text" name="site-title" id="site-title_inp" class="form-control shadow-none">
+                                        <input type="text" name="site-title" id="site-title_inp"
+                                            class="form-control shadow-none">
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">About us</label>
-                                        <textarea name="site-about" id="site-about_inp" class="form-control" rows="6"></textarea>
+                                        <textarea name="site-about" id="site-about_inp" class="form-control"
+                                            rows="6"></textarea>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" onclick="site_title.value=general_data.site_title, site_about.value= general_data.site_about" class="btn text-secondary shadow-none"
-                                        data-bs-dismiss="modal">Close</button>
-                                    <button type="button" onclick="upd_general(site_title.value,site_about.value)" class="btn custom-bg text-white shadow-none">Submit</button>
+                                    <button type="button"
+                                        onclick="site_title.value=general_data.site_title, site_about.value= general_data.site_about"
+                                        class="btn text-secondary shadow-none" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" onclick="upd_general(site_title.value,site_about.value)"
+                                        class="btn custom-bg text-white shadow-none">Submit</button>
                                 </div>
                             </div>
                         </form>
                     </div>
                 </div>
+
+
+                <!-- Shutdown section -->
+
+                <div class="card border-0 shsdow-sm">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <h5 class="card-title m-0">Shutdown Website</h5>
+                            <div class="form-check form-switch">
+                                <form>
+                                    <input onchange="upd_shutdown(this.value)" class="form-check-input" type="checkbox" id="shutdown-toggle">
+                                </form>
+                            </div>
+                        </div>
+                        <p class="card-text">
+                            No customers will be allowed to book hotel room when shutdown mode is turned on.
+                        </p>
+                    </div>
+                </div>
+
 
             </div>
         </div>
@@ -77,56 +101,90 @@
 
     <?php require('inc/scripts.php') ?>
     <script>
-        let general_data;
+    let general_data;
 
-        function get_general(){
-            let site_title = document.getElementById('site-title') ;
-            let site_about = document.getElementById('site-about');
+    function get_general() {
+        let site_title = document.getElementById('site-title');
+        let site_about = document.getElementById('site-about');
 
-            let site_title_inp = document.getElementById('site-title_inp') ;
-            let site_about_inp = document.getElementById('site-about_inp');
+        let site_title_inp = document.getElementById('site-title_inp');
+        let site_about_inp = document.getElementById('site-about_inp');
+
+        let shutdown_toggle = getElementById('shutdown-toggle'); 
 
 
-            let xhr = new XMLHttpRequest();
-            xhr.open("POST","ajax/settings_crud.php",true);
-            xhr.setRequestHeader('Contenet-Type','application/x-www-form-urlencoded');
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "ajax/settings_crud.php", true);
+        xhr.setRequestHeader('Contenet-Type', 'application/x-www-form-urlencoded');
 
-            xhr.onload = function(){
-                general_data = JSON.parse(this.responseText);
+        xhr.onload = function() {
+            general_data = JSON.parse(this.responseText);
 
-                site_title.innerText = general_data.site_title;
-                site_about.innerText = general_data.site_about;
+            site_title.innerText = general_data.site_title;
+            site_about.innerText = general_data.site_about;
 
-                site_title_inp.value = general_data.site_title;
-                site_about_inp.value = general_data.site_about;
-            }
+            site_title_inp.value = general_data.site_title;
+            site_about_inp.value = general_data.site_about;
             
-
-            xhr.send('get-general');
-        }
-
-        function upd_general(site_title_val,site_about_val){
-            let xhr = new XMLHttpRequest();
-            xhr.open("POST","ajax/settings_crud.php",true);
-            xhr.setRequestHeader('Contenet-Type','application/x-www-form-urlencoded');
-
-            xhr.onload = function(){
-                general_data = JSON.parse(this.responseText);
-
-                site_title.innerText = general_data.site_title;
-                site_about.innerText = general_data.site_about;
-
-                site_title_inp.value = general_data.site_title;
-                site_about_inp.value = general_data.site_about;
+            if(general_data.shutdown == 0){
+                shutdow_toggle.checked = false;
+                shutdow_toggle.value = 0;
             }
-            
-
-            xhr.send('site_title='+site_title_val+'&site_about'+site_about_val+'$upd_general');
+            else{
+                shutdow_toggle.checked = true;
+                shutdow_toggle.value = 1;
+            }
         }
 
-        window.onload = function(){
-            get_general(); 
+
+        xhr.send('get-general');
+    }
+
+    function upd_general(site_title_val, site_about_val) {
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "ajax/settings_crud.php", true);
+        xhr.setRequestHeader('Contenet-Type', 'application/x-www-form-urlencoded');
+
+        xhr.onload = function() {
+
+            var myModal = document.getElementById('general-s');
+            var modal = bootstrap.Modal.getInstance(myModal);
+            modal.hide();
+
+            if (this.responseText == 1) {
+                alert('success', 'Changes saved!');
+                get_general();
+            } else {
+                alert('error', 'NO Changes made!');
+            }
         }
+
+
+        xhr.send('site_title=' + site_title_val + '&site_about' + site_about_val + '$upd_general');
+    }
+
+    function upd_shutdown(val){
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "ajax/settings_crud.php", true);
+        xhr.setRequestHeader('Contenet-Type', 'application/x-www-form-urlencoded');
+
+        xhr.onload = function() {
+            if (this.responseText == 1 $$ general_data.shutdown==0) {
+                alert('success', 'Site has been shutdown!');
+            } else {
+                alert('success', 'Shutdown mode off!');
+            }
+            get_general();
+        }
+
+
+        xhr.send('upd_shutdown'+val);
+    }
+    }
+
+    window.onload = function() {
+        get_general();
+    }
     </script>
 </body>
 
