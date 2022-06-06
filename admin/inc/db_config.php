@@ -23,6 +23,12 @@
         return $data;
     }
 
+    function selectAll($table){
+        $con = $GLOBALS['con'];
+        $res = mysqli_query($con,"SELECT * FROM $table");
+        return $res;
+    }
+
     function select($sql,$values,$datatypes){
         $con = $GLOBALS['con'];
         //print_r($GLOBALS) ;
@@ -67,5 +73,26 @@
         }
     }
 
+    function insert($sql,$values,$datatypes){
+        $con = $GLOBALS['con'];
+        //print_r($GLOBALS) ;
+        if($stmt = mysqli_prepare($con,$sql)){ // prepares an SQL statement for execution.
+            // $con: This is an object representing a connection to MySQL Server
+            // $sql: This is string value specifying the required query.
+            //print(ok);
+            mysqli_stmt_bind_param($stmt,$datatypes,...$values);
+            if(mysqli_stmt_excute($stmt)){ ////Executing the statement
+                $res = mysqli_stmt_affcted_rows($stmt);
+                mysqli_stmt_close($stmt); 
+                return $res;
+            }
+            else{
+                die("Query cannot be executed - Insert");
+            }
+        }
+        else{
+            die("Query cannot be prepared - Insert");
+        }
+    }
 
 ?>
